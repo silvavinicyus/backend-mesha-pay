@@ -31,6 +31,9 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ default: false })
+  isAttendant?: boolean;
+
   @CreateDateColumn()
   created_at: Date;
 

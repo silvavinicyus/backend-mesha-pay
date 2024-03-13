@@ -1,7 +1,9 @@
+import { TreatmentProcedures } from 'src/treatment/entities/treatment_procedures.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,4 +30,10 @@ export class Procedure {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(
+    () => TreatmentProcedures,
+    (treatment_procedures) => treatment_procedures.procedure,
+  )
+  treatment_procedures?: TreatmentProcedures[];
 }
