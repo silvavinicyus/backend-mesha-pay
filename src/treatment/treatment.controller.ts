@@ -2,6 +2,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -15,6 +16,7 @@ import { TreatmentService } from './treatment.service';
 import { ProcedureService } from 'src/procedure/procedure.service';
 import { v4 as uuidV4 } from 'uuid';
 import { ITreatmentStatus, Treatment } from './entities/treatment.entity';
+import { IUserType } from 'src/user/entities/user.entity';
 
 @Controller('treatments')
 export class TreatmentController {
@@ -29,6 +31,14 @@ export class TreatmentController {
     props: Pick<InputCreateTreatmentDto, 'procedures' | 'doctor_id'>,
     @Req() req: Request,
   ) {
+    const userType = req['user']['type'];
+
+    if (userType !== IUserType.CLIENT) {
+      throw new ForbiddenException({
+        Error: 'You does not have access to this resource',
+      });
+    }
+
     const user_id = req['user']['sub'];
 
     const procedures_from_db = await this.procedureService.findByIds(
@@ -63,7 +73,15 @@ export class TreatmentController {
   }
 
   @Get('/open')
-  async findOpen() {
+  async findOpen(@Req() req: Request) {
+    const userType = req['user']['type'];
+
+    if (userType !== IUserType.DOCTOR) {
+      throw new ForbiddenException({
+        Error: 'You does not have access to this resource',
+      });
+    }
+
     const treatments = await this.treatmentService.findAll(
       ITreatmentStatus.OPEN,
     );
@@ -75,7 +93,16 @@ export class TreatmentController {
   async close(
     @Param(':uuid') uuid: string,
     @Body() props: Pick<Treatment, 'duration'>,
+    @Req() req: Request,
   ) {
+    const userType = req['user']['type'];
+
+    if (userType !== IUserType.DOCTOR) {
+      throw new ForbiddenException({
+        Error: 'You does not have access to this resource',
+      });
+    }
+
     const treatment = await this.treatmentService.findBy({
       column: 'uuid',
       value: uuid,
