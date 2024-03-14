@@ -9,5 +9,6 @@ export class OutputSignInDto {
     id: number;
     email: string;
     type: string;
+    name: string;
   };
 }

@@ -49,6 +49,8 @@ export class TreatmentService {
         treatment_procedures: {
           procedure: true,
         },
+        doctor: true,
+        client: true,
       },
     });
 
@@ -76,5 +78,23 @@ export class TreatmentService {
     });
 
     return treatment;
+  }
+
+  async findAllClosedByUser(user_id: number): Promise<Treatment[]> {
+    const procedures = await this.treatmentRepository.find({
+      where: {
+        status: ITreatmentStatus.CLOSED,
+        client_id: user_id,
+      },
+      relations: {
+        treatment_procedures: {
+          procedure: true,
+        },
+        doctor: true,
+        client: true,
+      },
+    });
+
+    return procedures;
   }
 }

@@ -2,15 +2,18 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { TreatmentProcedures } from './treatment_procedures.entity';
+import { User } from 'src/user/entities/user.entity';
 
 export enum ITreatmentStatus {
   OPEN = 'OPEN',
-  CLOSED = 'closed',
+  CLOSED = 'CLOSED',
 }
 
 @Entity('treatments')
@@ -50,4 +53,12 @@ export class Treatment {
     (treatment_procedures) => treatment_procedures.treatment,
   )
   treatment_procedures: TreatmentProcedures[];
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'doctor_id' })
+  doctor: User;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'client_id' })
+  client: User;
 }

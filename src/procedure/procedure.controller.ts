@@ -83,7 +83,10 @@ export class ProcedureController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @Param('uuid') uuid: string,
-    @Body() props: Partial<Pick<Procedure, 'name' | 'comission' | 'value'>>,
+    @Body()
+    props: Partial<
+      Pick<Procedure, 'name' | 'comission' | 'value' | 'duration'>
+    >,
   ) {
     const procedure = await this.procedureService.findBy({
       column: 'uuid',

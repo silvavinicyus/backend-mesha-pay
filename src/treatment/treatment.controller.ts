@@ -127,4 +127,20 @@ export class TreatmentController {
 
     return treatmentUpdated;
   }
+
+  @Get('/closed')
+  async findClosed(@Req() req: Request) {
+    const user_id = +req['user']['sub'];
+    const userType = req['user']['type'];
+
+    if (userType !== IUserType.CLIENT) {
+      throw new ForbiddenException({
+        Error: 'You does not have access to this resource',
+      });
+    }
+
+    const treatments = await this.treatmentService.findAllClosedByUser(user_id);
+
+    return treatments;
+  }
 }

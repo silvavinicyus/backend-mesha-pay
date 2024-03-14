@@ -25,6 +25,9 @@ export class Procedure {
   @Column({ type: 'float', nullable: false })
   comission: number;
 
+  @Column()
+  duration: number;
+
   @CreateDateColumn()
   created_at: Date;
 
