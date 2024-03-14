@@ -1,10 +1,20 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  ConflictException,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { InputCreateTreatmentDto } from './dtos/create.dto';
 import { Request } from 'express';
 import { TreatmentService } from './treatment.service';
 import { ProcedureService } from 'src/procedure/procedure.service';
 import { v4 as uuidV4 } from 'uuid';
-import { ITreatmentStatus } from './entities/treatment.entity';
+import { ITreatmentStatus, Treatment } from './entities/treatment.entity';
 
 @Controller('treatments')
 export class TreatmentController {
@@ -59,5 +69,35 @@ export class TreatmentController {
     );
 
     return treatments;
+  }
+
+  @Patch('/close/:uuid')
+  async close(
+    @Param(':uuid') uuid: string,
+    @Body() props: Pick<Treatment, 'duration'>,
+  ) {
+    const treatment = await this.treatmentService.findBy({
+      column: 'uuid',
+      value: uuid,
+    });
+
+    if (!treatment) {
+      throw new NotFoundException({
+        Error: 'There is no treatment with this uuid!',
+      });
+    }
+
+    if (treatment.status === ITreatmentStatus.CLOSED) {
+      throw new ConflictException({
+        Error: 'This treatment has already been closed',
+      });
+    }
+
+    const treatmentUpdated = await this.treatmentService.update({
+      id: treatment.id,
+      updateFields: { ...props, status: ITreatmentStatus.CLOSED },
+    });
+
+    return treatmentUpdated;
   }
 }

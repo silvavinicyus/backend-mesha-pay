@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { InputCreateTreatmentRepository } from './dtos/create.dto';
 import { ITreatmentStatus, Treatment } from './entities/treatment.entity';
 import { TreatmentProcedures } from './entities/treatment_procedures.entity';
+import { InputUpdateTreatmentDto } from './dtos/update.dto';
+import { IInputFindByTreatmentDto } from './dtos/find.dto';
 
 @Injectable()
 export class TreatmentService {
@@ -51,5 +53,28 @@ export class TreatmentService {
     });
 
     return procedures;
+  }
+
+  async update(props: InputUpdateTreatmentDto): Promise<Treatment> {
+    await this.treatmentRepository.update(
+      {
+        id: props.id,
+      },
+      props.updateFields,
+    );
+
+    const treatment = await this.treatmentRepository.findOne({
+      where: { id: props.id },
+    });
+
+    return treatment;
+  }
+
+  async findBy(props: IInputFindByTreatmentDto): Promise<Treatment | null> {
+    const treatment = await this.treatmentRepository.findOne({
+      where: { [props.column]: props.value },
+    });
+
+    return treatment;
   }
 }
