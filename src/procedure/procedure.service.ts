@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { IInputFindByProcedureDto } from './dtos/find.dto';
 import { InputUpdateProcedureDto } from './dtos/update.dto';
 import { Procedure } from './entities/procedure.entity';
@@ -40,5 +40,13 @@ export class ProcedureService {
 
   async update(props: InputUpdateProcedureDto): Promise<void> {
     await this.procedureRepository.update({ id: props.id }, props.updateFields);
+  }
+
+  async findByIds(ids: number[]): Promise<Procedure[]> {
+    const procedures = await this.procedureRepository.findBy({
+      id: In(ids),
+    });
+
+    return procedures;
   }
 }

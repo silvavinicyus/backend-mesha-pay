@@ -8,5 +8,7 @@ export class OutputSignInDto {
   user: {
     id: number;
     email: string;
+    type: string;
+    name: string;
   };
 }
