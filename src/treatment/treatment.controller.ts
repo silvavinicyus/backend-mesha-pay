@@ -16,7 +16,8 @@ import { TreatmentService } from './treatment.service';
 import { ProcedureService } from 'src/procedure/procedure.service';
 import { v4 as uuidV4 } from 'uuid';
 import { ITreatmentStatus, Treatment } from './entities/treatment.entity';
-import { IUserType } from 'src/user/entities/user.entity';
+import { IUserType, User } from 'src/user/entities/user.entity';
+import { UserMapper } from 'src/utils/userMapper';
 
 @Controller('treatments')
 export class TreatmentController {
@@ -86,7 +87,15 @@ export class TreatmentController {
       ITreatmentStatus.OPEN,
     );
 
-    return treatments;
+    const treatment_mapped: Treatment[] = treatments.map((treatment) => {
+      return {
+        ...treatment,
+        doctor: UserMapper.RemovePassword(treatment.doctor) as User,
+        client: UserMapper.RemovePassword(treatment.client) as User,
+      };
+    });
+
+    return treatment_mapped;
   }
 
   @Patch('/close/:uuid')
@@ -146,6 +155,14 @@ export class TreatmentController {
 
     const treatments = await this.treatmentService.findAllClosedByUser(user_id);
 
-    return treatments;
+    const treatment_mapped: Treatment[] = treatments.map((treatment) => {
+      return {
+        ...treatment,
+        doctor: UserMapper.RemovePassword(treatment.doctor) as User,
+        client: UserMapper.RemovePassword(treatment.client) as User,
+      };
+    });
+
+    return treatment_mapped;
   }
 }

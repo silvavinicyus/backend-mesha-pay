@@ -5,6 +5,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { CreateUserDto } from './dtos/create.dto';
 import { IUserType } from './entities/user.entity';
 import { UserService } from './user.service';
+import { UserMapper } from 'src/utils/userMapper';
 
 @Controller('users')
 export class UserController {
@@ -34,14 +35,18 @@ export class UserController {
       uuid: uuidV4(),
     });
 
-    return userCreated;
+    return UserMapper.RemovePassword(userCreated);
   }
 
   @Get('/doctors')
   async getDoctors() {
     const doctors = await this.usersService.findAllDoctors();
 
-    return doctors;
+    const mapped_doctors = doctors.map((doctor) =>
+      UserMapper.RemovePassword(doctor),
+    );
+
+    return mapped_doctors;
   }
 
   @Public()
