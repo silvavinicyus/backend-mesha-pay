@@ -15,6 +15,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { InputCreateProcedureDto } from './dtos/create.dto';
 import { Procedure } from './entities/procedure.entity';
 import { ProcedureService } from './procedure.service';
+import { Public } from 'src/auth/auth.decorator';
 
 @Controller('procedures')
 export class ProcedureController {
@@ -113,6 +114,74 @@ export class ProcedureController {
     await this.procedureService.update({
       id: procedure.id,
       updateFields: props,
+    });
+  }
+
+  @Public()
+  @Post('/seeds')
+  async createSeeds() {
+    await this.procedureService.create({
+      name: 'Corte de Cabelo',
+      value: 50.0,
+      comission: 0.2,
+      duration: 60,
+      uuid: uuidV4(),
+    });
+
+    await this.procedureService.create({
+      name: 'Coloração de Cabelo',
+      value: 80.0,
+      comission: 0.25,
+      duration: 120,
+      uuid: uuidV4(),
+    });
+
+    await this.procedureService.create({
+      name: 'Manicure',
+      value: 25.0,
+      comission: 0.15,
+      duration: 45,
+      uuid: uuidV4(),
+    });
+
+    await this.procedureService.create({
+      name: 'Pedicure',
+      value: 30.0,
+      comission: 0.15,
+      duration: 45,
+      uuid: uuidV4(),
+    });
+
+    await this.procedureService.create({
+      name: 'Depilação de Pernas',
+      value: 40.0,
+      comission: 0.2,
+      duration: 60,
+      uuid: uuidV4(),
+    });
+
+    await this.procedureService.create({
+      name: 'Tratamento Facial',
+      value: 70.0,
+      comission: 0.3,
+      duration: 90,
+      uuid: uuidV4(),
+    });
+
+    await this.procedureService.create({
+      name: 'Massagem Relaxante',
+      value: 60.0,
+      comission: 0.25,
+      duration: 60,
+      uuid: uuidV4(),
+    });
+
+    await this.procedureService.create({
+      name: 'Design de Sobrancelhas',
+      value: 20.0,
+      comission: 0.1,
+      duration: 30,
+      uuid: uuidV4(),
     });
   }
 }

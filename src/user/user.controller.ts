@@ -43,4 +43,18 @@ export class UserController {
 
     return doctors;
   }
+
+  @Public()
+  @Post('/seeds')
+  async createUserSeed() {
+    const hashedPassword = await hash('admin', +process.env.BCRYPT_SALT);
+
+    await this.usersService.create({
+      email: 'doctor@doctor.com',
+      password: hashedPassword,
+      name: 'Doctor Mesha',
+      type: IUserType.DOCTOR,
+      uuid: uuidV4(),
+    });
+  }
 }
