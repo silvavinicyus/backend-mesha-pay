@@ -1,15 +1,15 @@
+import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { TreatmentProcedures } from './treatment_procedures.entity';
-import { User } from 'src/user/entities/user.entity';
 
 export enum ITreatmentStatus {
   OPEN = 'OPEN',
@@ -24,10 +24,10 @@ export class Treatment {
   @Column({ unique: true })
   uuid: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: false })
   doctor_id: number;
 
-  @Column()
+  @Column({ unique: false })
   client_id: number;
 
   @Column({ nullable: true })
@@ -54,11 +54,11 @@ export class Treatment {
   )
   treatment_procedures: TreatmentProcedures[];
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'doctor_id' })
   doctor: User;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'client_id' })
   client: User;
 }
