@@ -91,11 +91,12 @@ export class TreatmentController {
 
   @Patch('/close/:uuid')
   async close(
-    @Param(':uuid') uuid: string,
+    @Param('uuid') uuid: string,
     @Body() props: Pick<Treatment, 'duration'>,
     @Req() req: Request,
   ) {
     const userType = req['user']['type'];
+    const user_id = req['user']['sub'];
 
     if (userType !== IUserType.DOCTOR) {
       throw new ForbiddenException({
@@ -122,7 +123,11 @@ export class TreatmentController {
 
     const treatmentUpdated = await this.treatmentService.update({
       id: treatment.id,
-      updateFields: { ...props, status: ITreatmentStatus.CLOSED },
+      updateFields: {
+        ...props,
+        status: ITreatmentStatus.CLOSED,
+        doctor_id: +user_id,
+      },
     });
 
     return treatmentUpdated;
